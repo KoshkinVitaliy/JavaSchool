@@ -5,7 +5,8 @@ public class Main {
         JavaSchoolStarter starter = new JavaSchoolStarter();
 
         try {
-            starter.execute("");
+            System.out.println(starter.execute(
+                    "INSERT VALUES 'lastName' = 'Ivanov' , 'id' = '3' , 'active' = 'true'"));
         }
         catch(Exception ex) {
             ex.printStackTrace();

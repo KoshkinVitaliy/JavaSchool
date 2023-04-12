@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JavaSchoolStarter {
-    private List<Map<String, Object>> list = new ArrayList<>();
+    public List<Map<String, Object>> list = new ArrayList<>();
+
 
     public JavaSchoolStarter() {
 
@@ -16,7 +17,7 @@ public class JavaSchoolStarter {
         switch (readRequest(request)) {
             case "INSERT" -> insertListElement(request);
             case "UPDATE" -> updateListElement();
-            case "DELETE" -> deleteListElement();
+            case "DELETE" -> deleteListElement(request);
             case "SELECT" -> selectListElement();
             default -> System.out.println(new Exception());
 
@@ -25,40 +26,71 @@ public class JavaSchoolStarter {
     }
 
     private void insertListElement(String request) {
+        //переписать метод добавления в коллекцию
         String key = "";
         String value = "";
         char[] requestArray = request.replaceAll(" ", "").toCharArray();
         Map<String, Object> row = new HashMap<>();
+        boolean keyFlag = false;
+        boolean valueFlag = false;
 
         System.out.println(request.replaceAll(" ", ""));
         for (int i=0; i < request.length(); i++) {
-            if(String.valueOf(requestArray[i]).equals("'")) {
-                for (int k = i+1; k < requestArray.length; k++) {
-                    if(!String.valueOf(requestArray[k]).equals("'")) {
-                        key = key + requestArray[k];
+            if(i >= requestArray.length) {
+                break;
+            }
+            if (String.valueOf(requestArray[i]).equals("=")) {
+                i++;
+                valueFlag = true;
+            }
+            else if(String.valueOf(requestArray[i]).equals("'")) {
+                i++;
+                keyFlag = true;
+            }
+
+            if(!keyFlag) {
+                if(!valueFlag) {
+                    if (i+1 == requestArray.length) {
+                        break;
                     }
-                    else {
-                        for (int m = k + 3; m < requestArray.length; m++) {
-                            if(!String.valueOf(requestArray[m]).equals("'")) {
-                                value = value + requestArray[m];
-                            }
-                            else {
-                                System.out.println("Key - " + key + ", value - '" + value + "'");
-                                System.out.println("i = " + i + ", k =  " + k + " m = " + m);
-                                row.put(key, value);
-                                i = m + 2 + value.length();
-                                k = i-1;
-                                key = "";
-                                value = "";
-                                break;
-                            }
-                        }
+                }
+                else {
+                    if (String.valueOf(requestArray[i]).equals("'")) {
+                        i++;
+                    }
+                    value = value + requestArray[i];
+                    if (String.valueOf(requestArray[i+1]).equals("'")) {
+                        i++;
+                        valueFlag = false;
+                        System.out.println("Value - " + value);
+
+                        row.put(key, value);
+                        System.out.println("i - " + i);
+                        value = "";
+                        key = "";
+                    }
+                    else if(String.valueOf(requestArray[i+1]).equals(",")) {
+                        valueFlag = false;
+                        System.out.println("Value - " + value);
+
+                        row.put(key, value);
+                        value = "";
+                        key = "";
                     }
                 }
             }
-            if (i >= requestArray.length) {
-                break;
+            else {
+                key = key + requestArray[i];
+                if(i == requestArray.length - 1) {
+                    break;
+                }
+                else if (String.valueOf(requestArray[i+1]).equals("'")) {
+                    i++;
+                    keyFlag = false;
+                    System.out.println("Key - " + key);
+                }
             }
+
         }
 
         list.add(row);
@@ -68,8 +100,54 @@ public class JavaSchoolStarter {
         System.out.println("Updating value");
     }
 
-    private void deleteListElement() {
-        System.out.println("Deleting value");
+    private void deleteListElement(String request) {
+        String key = "";
+        String value = "";
+        if(request.equals("DELETE")) {
+            list.clear();
+        }
+        else {
+            char[] requestArray = request.replaceAll(" ", "").toCharArray();
+            boolean keyFlag = false;
+            System.out.println(request.replaceAll(" ", ""));
+            for(int s=0; s < requestArray.length; s++) {
+                if(String.valueOf(requestArray[s]).equals("'")) {
+                    s++;
+                    keyFlag = true;
+                }
+                if(keyFlag) {
+                    if(String.valueOf(requestArray[s+1]).equals("'")) {
+                        keyFlag = false;
+                    }
+                    else {
+                        key = key + requestArray[s];
+                        System.out.println("Key - " + key);
+                    }
+                }
+
+                if(String.valueOf(requestArray[s]).equals("=")) {
+                    s++;
+                    if (String.valueOf(requestArray[s]).equals("'")) {
+                        s++;
+                    }
+                    if (s >= requestArray.length) {
+                        break;
+                    }
+                    else {
+                        if(!String.valueOf(requestArray[s]).equals("'")) {
+                            value = value + requestArray[s];
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println("Key - " + key + ", value - " + value);
+        for (int t=0; t < list.size(); t++) {
+            if (list.get(t).get(key).equals(value)) {
+                list.remove(t);
+            }
+        }
     }
 
     private void selectListElement() {

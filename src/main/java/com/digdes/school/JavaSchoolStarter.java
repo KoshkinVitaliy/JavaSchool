@@ -116,12 +116,12 @@ public class JavaSchoolStarter {
                     keyFlag = true;
                 }
                 if(keyFlag) {
+                    key = key + requestArray[s];
+                    System.out.println("Key - " + key);
+
                     if(String.valueOf(requestArray[s+1]).equals("'")) {
                         keyFlag = false;
-                    }
-                    else {
-                        key = key + requestArray[s];
-                        System.out.println("Key - " + key);
+                        s++;
                     }
                 }
 

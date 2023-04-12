@@ -16,14 +16,12 @@ public class JavaSchoolStarter {
             case "UPDATE" -> updateListElement(request);
             case "DELETE" -> deleteListElement(request);
             case "SELECT" -> selectListElement(request);
-            default -> System.out.println(new Exception());
-
+            default -> throw new RuntimeException("Incorrect request.");
         }
         return list;
     }
 
     private void insertListElement(String request) {
-        //переписать метод добавления в коллекцию
         String key = "";
         String value = "";
         char[] requestArray = request.replaceAll(" ", "").toCharArray();
@@ -59,16 +57,14 @@ public class JavaSchoolStarter {
                     if (String.valueOf(requestArray[i+1]).equals("'")) {
                         i++;
                         valueFlag = false;
-                        System.out.println("Value - " + value);
 
                         row.put(key, value);
-                        System.out.println("i - " + i);
+
                         value = "";
                         key = "";
                     }
                     else if(String.valueOf(requestArray[i+1]).equals(",")) {
                         valueFlag = false;
-                        System.out.println("Value - " + value);
 
                         row.put(key, value);
                         value = "";
@@ -84,7 +80,6 @@ public class JavaSchoolStarter {
                 else if (String.valueOf(requestArray[i+1]).equals("'")) {
                     i++;
                     keyFlag = false;
-                    System.out.println("Key - " + key);
                 }
             }
 
@@ -118,7 +113,6 @@ public class JavaSchoolStarter {
                 }
                 if(keyFlag) {
                     keyUpdate = keyUpdate + requestArray[i];
-                    System.out.println("KeyUpdate - " + key);
 
                     if(String.valueOf(requestArray[i+1]).equals("'")) {
                         keyFlag = false;
@@ -169,17 +163,14 @@ public class JavaSchoolStarter {
                         if (String.valueOf(requestArray[i+1]).equals("'")) {
                             i++;
                             valueFlag = false;
-                            System.out.println("Value - " + value);
 
                             updateRow.put(key, value);
-                            System.out.println("i - " + i);
                             value = "";
                             key = "";
                         }
                         else if(String.valueOf(requestArray[i+1]).equals(",")) {
                             valueFlag = false;
                             whereCheck = "";
-                            System.out.println("Value - " + value);
 
                             updateRow.put(key, value);
                             value = "";
@@ -196,7 +187,6 @@ public class JavaSchoolStarter {
                         i++;
                         keyFlag = false;
                         whereCheck = "";
-                        System.out.println("Key - " + key);
                     }
                 }
             }
@@ -231,7 +221,6 @@ public class JavaSchoolStarter {
                 }
                 if(keyFlag) {
                     key = key + requestArray[s];
-                    System.out.println("Key - " + key);
 
                     if(String.valueOf(requestArray[s+1]).equals("'")) {
                         keyFlag = false;
@@ -265,7 +254,9 @@ public class JavaSchoolStarter {
     }
 
     private void selectListElement(String request) {
-        System.out.println("Selecting value");
+        if (request.equals("SELECT")) {
+            System.out.println(list);
+        }
     }
 
     private String readRequest(String request) {
